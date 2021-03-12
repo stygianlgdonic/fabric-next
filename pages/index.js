@@ -1,65 +1,119 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+// import Head from 'next/head'
+import React from "react";
+// import ReactDOM from "react-dom";
+import { fabric } from "fabric";
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+const innerHeight = 900
+const innerWidth = 1600
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+export default class Demo extends React.Component {
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+  constructor(props) {
+    super(props);
+    this.canvasRef = React.createRef();
+    this.state = {
+      add: true
+    };
+  }
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+  componentDidMount() {
+    this._fabricCanvas = new fabric.Canvas(this.canvasRef.current);
+    const canvas = this._fabricCanvas;
+    window.canvas = canvas;
+    canvas.isMouseDown = false;
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+    // const { activePenColor, activePenSize, data } = this.props;
+    // canvas.loadFromJSON(data);
 
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+    canvas.isDrawingMode = true;
+    canvas.freeDrawingBrush.color = "#000";
+    canvas.freeDrawingBrush.width = 4;
 
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+    // this.drawLines(1000);
+    this.setState({
+      canvasDimensions: { height: window.innerHeight, width: window.innerWidth }
+    });
+    // canvas.on("mouse:down", this.onMouseDown);
+  }
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  onMouseDown = e => {
+    const { add } = this.state;
+
+    if (!add) {
+      return;
+    }
+    const canvas = this._fabricCanvas;
+
+    const { x, y } = canvas.getPointer(e.e);
+    this.text = new fabric.IText("", {
+      fontFamily: "arial",
+      left: x,
+      top: y,
+      erasable: true
+    });
+
+    this.text.on("editing:exited", async e => {
+      console.log({ e });
+    });
+
+    this.setState({ add: false });
+    canvas.selection = true;
+    canvas.isDrawingMode = false;
+    canvas.defaultCursor = "default";
+    canvas.hoverCursor = "grab";
+    canvas.moveCursor = "grabbing";
+    canvas.add(this.text);
+    canvas.setActiveObject(this.text);
+    if (this.text) {
+      this.text.selectable = true;
+      this.text.enterEditing();
+    }
+  };
+
+  // drawLines = num => {
+  //   const canvas = this._fabricCanvas;
+  //   let count = 0;
+  //   const interval = setInterval(() => {
+  //     count++;
+  //     if (count > num) {
+  //       clearInterval(interval);
+  //     }
+  //     const points = [
+  //       Math.floor(Math.random() * 1000),
+  //       Math.floor(Math.random() * 1000),
+  //       Math.floor(Math.random() * 1000),
+  //       Math.floor(Math.random() * 1000)
+  //     ];
+  //     const line = new fabric.Line(points, {
+  //       strokeWidth: 4,
+  //       fill: "#000",
+  //       stroke: "#000",
+  //       strokeLineCap: "round"
+  //     });
+  //     canvas.add(line);
+  //     // canvas.requestRenderAll();
+  //   }, 100);
+  // };
+
+  showData = () => {
+    const canvas = this._fabricCanvas;
+    console.log({ canvas });
+  };
+
+  render() {
+    return (
+      <div>
+        <canvas ref={this.canvasRef} height={innerHeight} width={innerWidth} />
+        <button
+          style={{ position: "absolute", zIndex: 1, top: 10, left: 10 }}
+          onClick={this.showData}
         >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+          Show Data
+        </button>
+      </div>
+    );
+  }
 }
+
+// const rootElement = document.getElementById("root");
+// ReactDOM.render(<Demo />, rootElement);
