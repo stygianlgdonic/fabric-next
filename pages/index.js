@@ -3,9 +3,6 @@ import React from "react";
 // import ReactDOM from "react-dom";
 import { fabric } from "fabric";
 
-const innerHeight = 900
-const innerWidth = 1600
-
 export default class Demo extends React.Component {
 
   constructor(props) {
@@ -21,9 +18,6 @@ export default class Demo extends React.Component {
     const canvas = this._fabricCanvas;
     window.canvas = canvas;
     canvas.isMouseDown = false;
-
-    // const { activePenColor, activePenSize, data } = this.props;
-    // canvas.loadFromJSON(data);
 
     canvas.isDrawingMode = true;
     canvas.freeDrawingBrush.color = "#000";
@@ -53,7 +47,7 @@ export default class Demo extends React.Component {
     });
 
     this.text.on("editing:exited", async e => {
-      console.log({ e });
+      console.log({ "logging e": e });
     });
 
     this.setState({ add: false });
@@ -70,31 +64,6 @@ export default class Demo extends React.Component {
     }
   };
 
-  // drawLines = num => {
-  //   const canvas = this._fabricCanvas;
-  //   let count = 0;
-  //   const interval = setInterval(() => {
-  //     count++;
-  //     if (count > num) {
-  //       clearInterval(interval);
-  //     }
-  //     const points = [
-  //       Math.floor(Math.random() * 1000),
-  //       Math.floor(Math.random() * 1000),
-  //       Math.floor(Math.random() * 1000),
-  //       Math.floor(Math.random() * 1000)
-  //     ];
-  //     const line = new fabric.Line(points, {
-  //       strokeWidth: 4,
-  //       fill: "#000",
-  //       stroke: "#000",
-  //       strokeLineCap: "round"
-  //     });
-  //     canvas.add(line);
-  //     // canvas.requestRenderAll();
-  //   }, 100);
-  // };
-
   showData = () => {
     const canvas = this._fabricCanvas;
     console.log({ canvas });
@@ -102,8 +71,10 @@ export default class Demo extends React.Component {
 
   render() {
     return (
-      <div>
-        <canvas ref={this.canvasRef} height={innerHeight} width={innerWidth} />
+      <div style={{ display: 'flex', justifyContent: 'center', placeItems: 'center', backgroundColor: 'pink', height: '100vh' }}>
+        <div style={{ backgroundColor: 'white' }}>
+          <canvas ref={this.canvasRef} height={628} width={1200} />
+        </div>
         <button
           style={{ position: "absolute", zIndex: 1, top: 10, left: 10 }}
           onClick={this.showData}
@@ -114,6 +85,3 @@ export default class Demo extends React.Component {
     );
   }
 }
-
-// const rootElement = document.getElementById("root");
-// ReactDOM.render(<Demo />, rootElement);
