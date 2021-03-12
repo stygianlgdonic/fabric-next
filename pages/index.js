@@ -1,21 +1,18 @@
 // import Head from 'next/head'
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 // import ReactDOM from "react-dom";
 import { fabric } from "fabric";
 
-export default class Demo extends React.Component {
+const MyStage = () => {
 
-  constructor(props) {
-    super(props);
-    this.canvasRef = React.createRef();
-    this.state = {
-      add: true
-    };
-  }
+  const canvasRef = useRef(null)
+  const [add, setAdd] = useState(true)
+  const [canvasDimensions, setCanvasDimensions] = useState(null)
 
-  componentDidMount() {
-    this._fabricCanvas = new fabric.Canvas(this.canvasRef.current);
-    const canvas = this._fabricCanvas;
+  useEffect(() => {
+
+    const _fabricCanvas = new fabric.Canvas(canvasRef.current);
+    const canvas = _fabricCanvas;
     window.canvas = canvas;
     canvas.isMouseDown = false;
 
@@ -24,64 +21,64 @@ export default class Demo extends React.Component {
     canvas.freeDrawingBrush.width = 4;
 
     // this.drawLines(1000);
-    this.setState({
-      canvasDimensions: { height: window.innerHeight, width: window.innerWidth }
-    });
+    setCanvasDimensions({ height: window.innerHeight, width: window.innerWidth })
     // canvas.on("mouse:down", this.onMouseDown);
-  }
 
-  onMouseDown = e => {
-    const { add } = this.state;
+  }, [])
+
+
+  const onMouseDown = e => {
+    // const { add } = this.state;
 
     if (!add) {
       return;
     }
-    const canvas = this._fabricCanvas;
+    const canvas = _fabricCanvas;
 
     const { x, y } = canvas.getPointer(e.e);
-    this.text = new fabric.IText("", {
+    const text = new fabric.IText("", {
       fontFamily: "arial",
       left: x,
       top: y,
       erasable: true
     });
 
-    this.text.on("editing:exited", async e => {
+    text.on("editing:exited", async e => {
       console.log({ "logging e": e });
     });
 
-    this.setState({ add: false });
+    setAdd(false)
     canvas.selection = true;
     canvas.isDrawingMode = false;
     canvas.defaultCursor = "default";
     canvas.hoverCursor = "grab";
     canvas.moveCursor = "grabbing";
-    canvas.add(this.text);
-    canvas.setActiveObject(this.text);
-    if (this.text) {
-      this.text.selectable = true;
-      this.text.enterEditing();
+    canvas.add(text);
+    canvas.setActiveObject(text);
+    if (text) {
+      text.selectable = true;
+      text.enterEditing();
     }
   };
 
-  showData = () => {
-    const canvas = this._fabricCanvas;
+  const showData = () => {
+    const canvas = _fabricCanvas;
     console.log({ canvas });
   };
 
-  render() {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', placeItems: 'center', backgroundColor: 'pink', height: '100vh' }}>
-        <div style={{ backgroundColor: 'white' }}>
-          <canvas ref={this.canvasRef} height={628} width={1200} />
-        </div>
-        <button
-          style={{ position: "absolute", zIndex: 1, bottom: 10, right: 10 }}
-          onClick={this.showData}
-        >
-          Log canvas Data
-        </button>
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', placeItems: 'center', backgroundColor: 'pink', height: '100vh' }}>
+      <div style={{ backgroundColor: 'white' }}>
+        <canvas ref={canvasRef} height={628} width={1200} />
       </div>
-    );
-  }
+      <button
+        style={{ position: "absolute", zIndex: 1, bottom: 10, right: 10 }}
+        onClick={showData}
+      >
+        Log canvas Data
+        </button>
+    </div>
+  );
 }
+
+export default MyStage
