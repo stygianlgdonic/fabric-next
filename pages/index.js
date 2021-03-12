@@ -76,10 +76,10 @@ export default class Demo extends React.Component {
           <canvas ref={this.canvasRef} height={628} width={1200} />
         </div>
         <button
-          style={{ position: "absolute", zIndex: 1, top: 10, left: 10 }}
+          style={{ position: "absolute", zIndex: 1, bottom: 10, right: 10 }}
           onClick={this.showData}
         >
-          Show Data
+          Log canvas Data
         </button>
       </div>
     );
